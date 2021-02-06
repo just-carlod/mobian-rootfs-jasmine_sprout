@@ -1,0 +1,26 @@
+{{- $architecture := or .architecture "arm64" -}}
+{{- $suite := "bullseye" -}}
+
+{{- $username := or .username "mobian" -}}
+{{- $password := or .password "1234" -}}
+{{- $hostname := or .hostname "mobian" -}}
+
+architecture: {{ $architecture }}
+actions:
+
+  - action: recipe
+    description: Generate base rootfs
+    recipe: recipes/hybris_mobian_base.yaml
+    variables:
+      architecture: {{ $architecture }}
+      suite: {{ $suite }}
+
+  - action: run
+    description: Set up default user
+    chroot: true
+    script: scripts/setup-user.sh {{ $username }} {{ $password }}
+
+  - action: run
+    description: Set up system
+    chroot: true
+    script: scripts/setup-system.sh {{ $hostname }}

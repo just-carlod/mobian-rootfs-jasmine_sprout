@@ -1,0 +1,29 @@
+{{- $architecture := or .architecture "arm64" -}}
+{{- $suite := "bullseye" -}}
+
+architecture: {{ $architecture }}
+actions:
+
+  - action: debootstrap
+    suite: {{ $suite }}
+    components:
+      - main
+    mirror: https://deb.debian.org/debian
+    variant: minbase
+
+  - action: overlay
+    source: ../overlay
+    description: Adding specific overlay
+    destination: /
+
+  - action: run
+    chroot: true
+    description: update apt
+    command: apt update
+
+  - action: apt
+    chroot: true
+    description: install apt config
+    packages:
+      - hybris-mobian-apt-config
+      - hybris-mobian-archive-keyring
